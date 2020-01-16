@@ -2,6 +2,9 @@
 #include <vector>
 #include <chrono>
 #include <cmath>
+#include <ctime>
+#include <cstdlib>
+
 using namespace std;
 
 #ifndef vd
@@ -23,14 +26,16 @@ vector<vd> l(N, vd(N));
 
 void initialise()
 {
-	// for(int i=1;i<=3;++i)
-	// {
-	// 	for(int j=1;j<=3;++j)
-	// 	{
-	// 		orig[i][j] = (i-1)*3+j;
-	// 		a[i][j] = (i-1)*3+j;
-	// 	}
-	// }
+	srand48(time(NULL));
+	for(int i=1;i<=n;++i)
+	{
+		for(int j=1;j<=n;++j)
+		{
+			double x = drand48();
+			orig[i][j] = x;
+			a[i][j] = x;
+		}
+	}
 }
 
 int LUD()
@@ -111,27 +116,14 @@ double verify()
 
 int main(int argc, char const *argv[])
 {
-	// cin >> n >> t;
-	n = 3;
+	n = atoi(argv[1]);
+	t = atoi(argv[2]);
 	initialise();
-	// chrono::high_resolution_clock::time_point t1 = chrono::high_resolution_clock::now();
+	auto t1 = chrono::high_resolution_clock::now();
 	LUD();
-	// chrono::high_resolution_clock::time_point t2 = chrono::high_resolution_clock::now();
-	
+	auto t2 = chrono::high_resolution_clock::now();
+	auto count = std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count();
+	cout<<"Time Taken: "<<count<<"\n";
 	cout<<"L21 Norm: "<<verify()<<"\n";
-	cout<<"L: "<<"\n";
-	for(int i=1;i<=n;++i)
-	{
-		for(int j=1;j<=n;++j)
-			cout<<l[i][j]<<" ";
-		cout<<"\n";
-	}
-	cout<<"\nU: "<<"\n";
-	for(int i=1;i<=n;++i)
-	{
-		for(int j=1;j<=n;++j)
-			cout<<u[i][j]<<" ";
-		cout<<"\n";
-	}
 	return 0;
 }
