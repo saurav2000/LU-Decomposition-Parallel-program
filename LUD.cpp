@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <chrono>
+#include <cmath>
 using namespace std;
 
 #ifndef vd
@@ -21,10 +22,6 @@ vector<vd> l(N, vd(N));
 
 int LUD()
 {
-	++n;
-	
-	--n;
-
 	for(int i=1;i<=n;++i)
 	{
 		pi[i] = i;
@@ -45,7 +42,7 @@ int LUD()
 			}
 		}
 
-		if(!max)
+		if(!k_)
 			return 1;
 
 		swap(pi[k], pi[k_]);
