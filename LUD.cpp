@@ -17,8 +17,21 @@ int n, t;
 
 vi pi(N);
 vector<vd> a(N, vd(N));
+vector<vd> orig(N, vd(N));
 vector<vd> u(N, vd(N));
 vector<vd> l(N, vd(N));
+
+void initialise()
+{
+	// for(int i=1;i<=3;++i)
+	// {
+	// 	for(int j=1;j<=3;++j)
+	// 	{
+	// 		orig[i][j] = (i-1)*3+j;
+	// 		a[i][j] = (i-1)*3+j;
+	// 	}
+	// }
+}
 
 int LUD()
 {
@@ -75,10 +88,7 @@ double verify()
 	vector<vd> res(1, vd(n+1));
 
 	for(int i=1;i<=n;++i)
-	{
-		for(int j=1;j<=n;++j)
-			res.push_back(a[pi[i]]);
-	}
+		res.push_back(orig[pi[i]]);;
 
 	for(int i=1; i<=n; ++i)
 		for(int j=1; j<=n; ++j)
@@ -101,11 +111,27 @@ double verify()
 
 int main(int argc, char const *argv[])
 {
-	cin >> n >> t;
-	chrono::high_resolution_clock::time_point t1 = chrono::high_resolution_clock::now();
+	// cin >> n >> t;
+	n = 3;
+	initialise();
+	// chrono::high_resolution_clock::time_point t1 = chrono::high_resolution_clock::now();
 	LUD();
-	chrono::high_resolution_clock::time_point t2 = chrono::high_resolution_clock::now();
+	// chrono::high_resolution_clock::time_point t2 = chrono::high_resolution_clock::now();
 	
 	cout<<"L21 Norm: "<<verify()<<"\n";
+	cout<<"L: "<<"\n";
+	for(int i=1;i<=n;++i)
+	{
+		for(int j=1;j<=n;++j)
+			cout<<l[i][j]<<" ";
+		cout<<"\n";
+	}
+	cout<<"\nU: "<<"\n";
+	for(int i=1;i<=n;++i)
+	{
+		for(int j=1;j<=n;++j)
+			cout<<u[i][j]<<" ";
+		cout<<"\n";
+	}
 	return 0;
 }
