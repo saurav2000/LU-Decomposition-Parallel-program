@@ -46,6 +46,8 @@ void initialise()
 			double x = drand48();
 			orig[i][j] = x;
 			a[i][j] = x;
+			l[i][j] = 0;
+			u[i][j] = 0;
 		}
 
 		pi[i] = i;
@@ -59,7 +61,7 @@ int LUD()
 	{
 		double max = 0;
 		int k_ = 0;
-		for (int i=k; i<=n; ++i)
+		for(int i=k; i<=n; ++i)
 		{
 			if(max<fabs(a[i][k]))
 			{
@@ -72,8 +74,7 @@ int LUD()
 			return 1;
 
 		swap(pi[k], pi[k_]);
-		for(int i=1;i<=n;++i)
-			swap(a[k][i], a[k_][i]);
+		swap(a[k], a[k_]);
 
 		for(int i=1;i<=k-1;++i)
 			swap(l[k][i], l[k_][i]);
@@ -89,10 +90,9 @@ int LUD()
 		for(int i=k+1; i<=n; ++i)
 		{
 			for(int j=k+1; j<=n; ++j)
-				a[i][j] = a[i][j] - (l[i][k] * u[k][j]);
+				a[i][j] -= (l[i][k] * u[k][j]);
 		}
 	}
-
 
 	return 0;
 }
@@ -135,7 +135,7 @@ int main(int argc, char const *argv[])
 	}
 	auto t2 = chrono::high_resolution_clock::now();
 	auto count = std::chrono::duration_cast<std::chrono::duration<double> >(t2-t1).count();
-	cout<<"Time Taken: "<<count<<"\n";
-	cout<<"L21 Norm: "<<verify()<<"\n";
+	cout<<count<<"\n";
+	// cout<<"L21 Norm: "<<verify()<<"\n";
 	return 0;
 }
