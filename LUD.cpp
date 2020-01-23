@@ -18,14 +18,26 @@ using namespace std;
 
 int n, t;
 
-vi pi(N);
-vector<vd> a(N, vd(N));
-vector<vd> orig(N, vd(N));
-vector<vd> u(N, vd(N));
-vector<vd> l(N, vd(N));
+int *pi;
+double **a, **orig, **u, **l, **res;
 
 void initialise()
 {
+	pi = (int*)malloc(sizeof(int) * (n+1));
+	a = (double**)malloc(sizeof(double*) * (n+1));
+	orig = (double**)malloc(sizeof(double*) * (n+1));
+	l = (double**)malloc(sizeof(double*) * (n+1));
+	u = (double**)malloc(sizeof(double*) * (n+1));
+	res = (double**)malloc(sizeof(double*) * (n+1));
+	for(int i=0;i<n+1;++i)
+	{
+		a[i] = (double*)(malloc(sizeof(double) * (n+1)));
+		orig[i] = (double*)(malloc(sizeof(double) * (n+1)));
+		l[i] = (double*)(malloc(sizeof(double) * (n+1)));
+		u[i] = (double*)(malloc(sizeof(double) * (n+1)));
+		res[i] = (double*)(malloc(sizeof(double) * (n+1)));
+	}
+
 	srand48(time(NULL));
 	for(int i=1;i<=n;++i)
 	{
@@ -35,18 +47,14 @@ void initialise()
 			orig[i][j] = x;
 			a[i][j] = x;
 		}
+
+		pi[i] = i;
+		l[i][i] = 1;
 	}
 }
 
 int LUD()
 {
-	for(int i=1;i<=n;++i)
-	{
-		pi[i] = i;
-		l[i][i] = 1;
-	}
-
-
 	for(int k=1;k<=n;++k)
 	{
 		double max = 0;
@@ -64,7 +72,8 @@ int LUD()
 			return 1;
 
 		swap(pi[k], pi[k_]);
-		a[k].swap(a[k_]);
+		for(int i=1;i<=n;++i)
+			swap(a[k][i], a[k_][i]);
 
 		for(int i=1;i<=k-1;++i)
 			swap(l[k][i], l[k_][i]);
@@ -90,10 +99,9 @@ int LUD()
 
 double verify()
 {
-	vector<vd> res(1, vd(n+1));
-
 	for(int i=1;i<=n;++i)
-		res.push_back(orig[pi[i]]);;
+		for(int j=1;j<=n;++j)
+				res[i][j] = orig[pi[i]][j];
 
 	for(int i=1; i<=n; ++i)
 		for(int j=1; j<=n; ++j)
@@ -110,7 +118,6 @@ double verify()
 	}
 
 	return l21;
-
 }
 
 
@@ -120,9 +127,14 @@ int main(int argc, char const *argv[])
 	t = atoi(argv[2]);
 	initialise();
 	auto t1 = chrono::high_resolution_clock::now();
-	LUD();
+	int err = LUD();
+	if(err)
+	{
+		cout<<"Singular Matrix\n";
+		return 0;
+	}
 	auto t2 = chrono::high_resolution_clock::now();
-	auto count = std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count();
+	auto count = std::chrono::duration_cast<std::chrono::duration<double> >(t2-t1).count();
 	cout<<"Time Taken: "<<count<<"\n";
 	cout<<"L21 Norm: "<<verify()<<"\n";
 	return 0;
