@@ -10,14 +10,17 @@ The code can be compiled using makefile. It has 3 modes
 
 The code is compiled by
 > For sequential code:
-> `make seq` 
+> `make seq`
+> 
 > For code parallelised by Pthreads:
 > `make pthread`
+> 
 > For code parallelised by OpenMP:
 > `make omp`
 
 The executable generated is a.out and takes 2 parameters for Pthreads and OpenMP and only 1 parameter for the sequential code.
 > For Pthread and OpenMP:
 > `./a.out [SIZE_OF_MATRIX] [NO_OF_THREADS]`
+> 
 > For sequential:
 > `./a.out [SIZE_OF_MATRIX]`
