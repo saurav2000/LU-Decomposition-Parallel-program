@@ -8,17 +8,7 @@
 
 using namespace std;
 
-#ifndef vd
-#define vd vector<double>
-#endif
-#ifndef vi
-#define vi vector<int>
-#endif
-
-#define N 8001
-#define T 16
-
-
+// struct for the thread argument
 struct arg_t
 {
 	int low, high, id;
@@ -27,9 +17,11 @@ struct arg_t
 // k is a global variable for all threads
 int n, t, k;
 
+//Pointers for all the data required
 int *pi;
 double **a, **orig, **u, **l, **res;
 
+//Thread array for pthreads
 pthread_t threads[T];
 double max_arr[T];
 int k_arr[T];
@@ -68,26 +60,6 @@ void initialise()
 	}
 }
 
-// void* max_loop(void *argv)
-// {
-// 	struct arg_t *arg = ((struct arg_t*)argv);
-// 	int l = arg->low, h=arg->high, id = arg->id;
-// 	double max = 0;
-// 	int k_ = 0;
-// 	for(int i=l;i<=h;++i)
-// 	{
-// 		if(max<fabs(a[i][k]))
-// 		{
-// 			max = fabs(a[i][k]);
-// 			k_ = i;
-// 		}
-// 	}
-// 	max_arr[id] = max;
-// 	k_arr[id] = k_;
-
-// 	free(arg);
-// }
-
 void* n2_loop(void *argv)
 {
 	struct arg_t *arg = ((struct arg_t*)argv);
@@ -95,49 +67,16 @@ void* n2_loop(void *argv)
 
 	for(int i=low;i<=high;++i)
 	{
-		// cout<<i<<"\n";
 		for(int j=k+1;j<=n;++j)
 			a[i][j] -= (l[i][k] * u[k][j]);
 	}
-	// cout<<"\n";
-	// free(arg);
+	free(arg);
 }
 
 int LUD()
 {
 	for(k=1; k<=n; ++k)
 	{
-		// // Loop to find out maximum
-		// int x = (int)(ceil(n-k+1)/t);
-		// for(int i=0;i<t;++i)
-		// {
-		// 	struct arg_t *arg = malloc(sizeof(struct arg_t));
-		// 	arg->low = i*x + 1;
-		// 	arg->high = min(((i+1)*x), n);
-		// 	arg->id = i;
-		// 	pthread_create(&threads[i], NULL, max_loop, (void*)arg);
-		// }
-		// for(int i=0;i<t;++i)
-		// 	pthread_join(threads[i], NULL);
-		
-		// double max = 0;
-		// int k_ = 0;
-		// for(int i=0;i<t;++i)
-		// {
-		// 	if(max<max_arr[i])
-		// 	{
-		// 		max = max_arr[i];
-		// 		k_ = k_arr[i];
-		// 	}
-		// }
-
-		// if(!k_)
-		// 	return 1;
-		
-		// swap(pi[k], pi[k_]);
-		// a[k].swap(a[k_]);
-		// //Swapping pi and a:
-
 		double max = 0;
 		int k_ = 0;
 		for(int i=k; i<=n; ++i)
