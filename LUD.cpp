@@ -7,22 +7,19 @@
 
 using namespace std;
 
-#ifndef vd
-#define vd vector<double>
-#endif
-#ifndef vi
-#define vi vector<int>
-#endif
+int n;
 
-#define N 8001
-
-int n, t;
-
+//Pointers for all the data required
 int *pi;
 double **a, **orig, **u, **l, **res;
 
+/**
+* This function initialises all the matrices
+* and pi appropriately using drand48
+*/
 void initialise()
 {
+	// Memory Allocation of all pointers
 	pi = (int*)malloc(sizeof(int) * (n+1));
 	a = (double**)malloc(sizeof(double*) * (n+1));
 	orig = (double**)malloc(sizeof(double*) * (n+1));
@@ -38,6 +35,7 @@ void initialise()
 		res[i] = (double*)(malloc(sizeof(double) * (n+1)));
 	}
 
+	// Initialising a, l and u
 	srand48(time(NULL));
 	for(int i=1;i<=n;++i)
 	{
@@ -55,10 +53,15 @@ void initialise()
 	}
 }
 
+/**
+* This is the main function where the entire 
+* steps of LU decomposition happens
+*/
 int LUD()
 {
 	for(int k=1;k<=n;++k)
 	{
+		// Computing maximum
 		double max = 0;
 		int k_ = 0;
 		for(int i=k; i<=n; ++i)
@@ -73,6 +76,7 @@ int LUD()
 		if(!k_)
 			return 1;
 
+		// Swapping the appropriate rows of pi, a and l
 		swap(pi[k], pi[k_]);
 		swap(a[k], a[k_]);
 
@@ -87,6 +91,7 @@ int LUD()
 			u[k][i] = a[k][i];
 		}
 
+		// Decomposing matrix A
 		for(int i=k+1; i<=n; ++i)
 		{
 			for(int j=k+1; j<=n; ++j)
@@ -97,17 +102,24 @@ int LUD()
 	return 0;
 }
 
+/**
+* This function calculates the L21 norm
+* of the matrix and returns it
+*/
 double verify()
 {
+	// Res = PA
 	for(int i=1;i<=n;++i)
 		for(int j=1;j<=n;++j)
 				res[i][j] = orig[pi[i]][j];
 
+	// Res-=LU
 	for(int i=1; i<=n; ++i)
 		for(int j=1; j<=n; ++j)
 			for(int k=1; k<=n; ++k)
 				res[i][j]-= l[i][k] * u[k][j];
 
+	// Calculating Norm
 	double l21 = 0.0;
 	for(int i=1; i<=n; ++i)
 	{
@@ -124,7 +136,7 @@ double verify()
 int main(int argc, char const *argv[])
 {
 	n = atoi(argv[1]);
-	t = atoi(argv[2]);
+	// t = atoi(argv[2]);
 	initialise();
 	auto t1 = chrono::high_resolution_clock::now();
 	int err = LUD();
@@ -133,6 +145,7 @@ int main(int argc, char const *argv[])
 		cout<<"Singular Matrix\n";
 		return 0;
 	}
+	//Printing time
 	auto t2 = chrono::high_resolution_clock::now();
 	auto count = std::chrono::duration_cast<std::chrono::duration<double> >(t2-t1).count();
 	cout<<count<<"\n";
