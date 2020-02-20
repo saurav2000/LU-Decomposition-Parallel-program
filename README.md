@@ -20,7 +20,7 @@ The code is compiled by
 
 The executable generated is a.out and takes 2 parameters for Pthreads and OpenMP and only 1 parameter for the sequential code.
 > For Pthread and OpenMP:
-> `./a.out [SIZE_OF_MATRIX] [NO_OF_THREADS]`
+> `./a.out [SIZE_OF_MATRIX] [NO_OF_THREADS] [INPUT_FILE_NAME]`
 > 
 > For sequential:
 > `./a.out [SIZE_OF_MATRIX]`
