@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <chrono>
 #include <cmath>
 #include <ctime>
@@ -22,6 +23,8 @@ int n, t, k;
 //Pointers for all the data required
 int *pi;
 double **a, **orig, **u, **l, **res;
+ifstream fin;
+ofstream fout;
 
 //Thread array for pthreads
 pthread_t threads[T];
@@ -32,7 +35,7 @@ int k_arr[T];
 * This function initialises all the matrices
 * and pi appropriately using drand48
 */
-void initialise()
+void initialise(const char *input_file_name)
 {
 	// Memory Allocation of all pointers
 	pi = (int*)malloc(sizeof(int) * (n+1));
@@ -50,13 +53,30 @@ void initialise()
 		res[i] = (double*)(malloc(sizeof(double) * (n+1)));
 	}
 
+	fin.open(input_file_name);
 	// Initialising a, l and u
-	srand48(time(NULL));
+	// srand48(time(NULL));
+	// for(int i=1;i<=n;++i)
+	// {
+	// 	for(int j=1;j<=n;++j)
+	// 	{
+	// 		double x = drand48();
+	// 		orig[i][j] = x;
+	// 		a[i][j] = x;
+	// 		l[i][j] = 0;
+	// 		u[i][j] = 0;
+	// 	}
+
+	// 	pi[i] = i;
+	// 	l[i][i] = 1;
+	// }
+
 	for(int i=1;i<=n;++i)
 	{
 		for(int j=1;j<=n;++j)
 		{
-			double x = drand48();
+			double x;
+			fin>>x;
 			orig[i][j] = x;
 			a[i][j] = x;
 			l[i][j] = 0;
@@ -66,6 +86,7 @@ void initialise()
 		pi[i] = i;
 		l[i][i] = 1;
 	}
+	fin.close();
 }
 
 /**
@@ -179,11 +200,56 @@ double verify()
 	return l21;
 }
 
+void write_output()
+{
+	string a1 = "P_" + to_string(n) + "_" + to_string(t)+"threads.txt";
+	const char *pf = a1.c_str();
+	string a2 = "L_" + to_string(n) + "_" + to_string(t)+"threads.txt";
+	const char *lf = a2.c_str();
+	string a3 = "U_" + to_string(n) + "_" + to_string(t)+"threads.txt";
+	const char *uf = a3.c_str();
+
+	fout.open(pf);
+	for(int i=1;i<=n;++i)
+	{
+		int x = pi[i];
+		for(int j=1;j<=n;++j)
+		{
+			if(j==x)
+				fout<<"1 ";
+			else
+				fout<<"0 ";
+		}
+		fout<<"\n";
+	}
+	fout.close();
+
+	fout.open(lf);
+	for(int i=1;i<=n;++i)
+	{
+		for(int j=1;j<=n;++j)
+			fout<<l[i][j]<<" ";
+		
+		fout<<"\n";
+	}
+	fout.close();
+	
+	fout.open(uf);
+	for(int i=1;i<=n;++i)
+	{
+		for(int j=1;j<=n;++j)
+			fout<<u[i][j]<<" ";
+		
+		fout<<"\n";
+	}
+	fout.close();
+}
+
 int main(int argc, char const *argv[])
 {
 	n = atoi(argv[1]);
 	t = atoi(argv[2]);
-	initialise();
+	initialise(argv[3]);
 
 	auto t1 = chrono::high_resolution_clock::now();
 	int err = LUD();
@@ -196,6 +262,7 @@ int main(int argc, char const *argv[])
 	auto t2 = chrono::high_resolution_clock::now();
 	auto count = std::chrono::duration_cast<std::chrono::duration<double> >(t2-t1).count();
 	cout<<count<<"\n";
-	// cout<<"L21 Norm: "<<verify()<<"\n";
+	write_output();
+	cout<<"L21 Norm: "<<verify()<<"\n";
 	return 0;
 }
